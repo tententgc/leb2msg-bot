@@ -1,4 +1,5 @@
 import lineNotification from "./routers/line-notification";
+import timeconvert from "./helpers/timeconvert";
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
 
@@ -11,6 +12,7 @@ interface class_activity_pageType {
 }
 
 dotenv.config();
+
 
 (async () => {
     const browser = await puppeteer.launch();
@@ -29,6 +31,8 @@ dotenv.config();
             document.querySelectorAll(
                 'div[class="col-xs-12 col-md-6 col-lg-4 col-xl-3 whole-card "] > div'
             )
+
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             //@ts-ignore
         ).map((item) => item.attributes["data-url"].value);
     });
@@ -37,7 +41,8 @@ dotenv.config();
         return item.replace("/plan/syllabus/index", "/activity");
     });
 
-    var class_activity_page: class_activity_pageType = {};
+    // eslint-disable-next-line prefer-const
+    let class_activity_page: class_activity_pageType = {};
 
     for (let i = 0; i < class_activity.length; i++) {
         await page.goto(class_activity[i], {
@@ -80,6 +85,7 @@ dotenv.config();
             });
         });
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         class_activity_page[class_name] = assignment_all;
     }
@@ -89,8 +95,9 @@ dotenv.config();
             for (let i = 0; i < value.length; i++) {
                 if (value[i] !== null) {
                     const { title, publish_date, due_date } = value[i];
-                    if (title !== null && publish_date !== null && due_date !== null) {
+                    if (title !== null && publish_date !== null && due_date !== null && timeconvert(due_date) >= 0) {
                         const message = `${key} - ${title} - ${publish_date} - ${due_date}`;
+                        console.log(message);
                         lineNotification(message);
                     }
                 }
