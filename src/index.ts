@@ -1,5 +1,5 @@
 import lineNotification from "./routers/line-notification";
-import timeconvert from "./helpers/timeconvert";
+import timeconvert from "./routers/timeconvert";
 import puppeteer from "puppeteer";
 import dotenv from "dotenv";
 
@@ -90,15 +90,16 @@ dotenv.config();
         class_activity_page[class_name] = assignment_all;
     }
 
+
     for (const [key, value] of Object.entries(class_activity_page)) {
         if (value !== null) {
             for (let i = 0; i < value.length; i++) {
                 if (value[i] !== null) {
                     const { title, publish_date, due_date } = value[i];
-                    if (title !== null && publish_date !== null && due_date !== null && timeconvert(due_date) >= 0) {
+                    if (title !== null && publish_date !== null && due_date !== null && timeconvert(due_date) > 0) { 
                         const message = `${key} - ${title} - ${publish_date} - ${due_date}`;
                         console.log(message);
-                        lineNotification(message);
+                        // lineNotification(message);
                     }
                 }
             }
